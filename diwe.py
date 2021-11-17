@@ -46,7 +46,7 @@ def main():
         type=str,
         default=None,
         help="set file as wallpaper")
-    ## time arguemnt (for dynamic wallpaper):
+    ## time argument (for dynamic wallpaper):
     parser.add_argument(
         "-t",
         "--time",
@@ -105,9 +105,6 @@ def set_static_wallpaper(wallpaper_file):
 
 
 def set_dynamic_wallpaper()
-    """
-    Parameters = image_list + time
-    """
     pass
 
 
