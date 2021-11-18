@@ -69,6 +69,7 @@ def main():
         file=sys.stderr)
         sys.exit(-1)
 
+
     ## Time for dynamic wallpaper:
     wallpaper_time = args.time
 
@@ -82,7 +83,6 @@ def main():
     ## Check wallpaper mode:
     if args.dynamic:
         pass
-"""
        ## Check if time was provided:
         if wallpaper_time == None:
             print(f"ERROR! No time was specified! Specify wallpaper with '-t <TIME>'.",
@@ -90,7 +90,6 @@ def main():
             sys.exit(-1)
         else:
             set_dynamic_wallpaper(wallpaper_file, wallpaper_time)
-"""
     elif args.live:
         pass
     elif args.hybrid:
@@ -112,6 +111,7 @@ def main():
         else:
             set_static_wallpaper(wallpaper_file[0][0])
 
+
 def set_static_wallpaper(wallpaper_file):
     ## Set wallpaper using 'feh':
     exit_code = os.system(f'feh --bg-scale {wallpaper_file}')
@@ -119,6 +119,7 @@ def set_static_wallpaper(wallpaper_file):
     ## Check if command was executed successfully (returned 0):
     if exit_code == 0:
         print(f"Wallpaper was set to '{wallpaper_file}'.")
+        sys.exit(0)
     else:
         print(f"ERROR! Wallpaper could not be set to '{wallpaper_file}'. Exit code ({exit_code})!",
         file=sys.stderr)
@@ -126,14 +127,14 @@ def set_static_wallpaper(wallpaper_file):
 
 
 def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
-
-    ## 2 Ways how to specify dynamic wallpaper:
-    ## - select directory -> all images inside directory will be choosed
-    ## - select multiple img files
-
-    ## Check if wallpaper_file is directory:
-    if os.path.isdir(wallpaper_file):
+    ## Check amount of wallpaper_file arguments,
+    ## 1  = directory (all images in dir will be used),
+    ## 2+ = image files (all selected image files will be used):
+    if len(wallpaper_file[0]) == 1:
         ## Find all images in directory:
+        pass
+    else:
+        ## Use all arguments as wallpaper images:
         pass
 
 
