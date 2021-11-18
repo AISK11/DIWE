@@ -65,7 +65,7 @@ def main():
 
     ## Check if wallpaper was provided:
     if wallpaper_file == None:
-        print(f"ERROR! No wallpaper was selected. Select wallpaper with '-w <WALLPAPER>'.",
+        print(f"ERROR! No wallpaper was selected! Select wallpaper with '-w <WALLPAPER>'.",
         file=sys.stderr)
         sys.exit(-1)
 
@@ -97,15 +97,16 @@ def main():
     else:
         ## Check if only one wallpaper argument was provided for static wallpaper:
         if len(wallpaper_file[0]) > 1:
-            print("ERROR! Static wallpaper can accept only 1 file.")
-            sys.exit(-1)
-        ## Check if wallpaper is file:
-        if not os.path.isfile(wallpaper_file[0][0]):
-            print(f"ERROR! Specified wallpaper '{wallpaper_file[0][0]}' does not exists!",
+            print("ERROR! Static wallpaper can accept only 1 file!",
             file=sys.stderr)
             sys.exit(-1)
-        elif os.path.isdir(wallpaper_file[0][0]):
+        ## Check if wallpaper is file:
+        if os.path.isdir(wallpaper_file[0][0]):
             print(f"ERROR! Specified wallpaper '{wallpaper_file[0][0]}' is directory!",
+            file=sys.stderr)
+            sys.exit(-1)
+        elif not os.path.isfile(wallpaper_file[0][0]):
+            print(f"ERROR! Specified wallpaper '{wallpaper_file[0][0]}' does not exists!",
             file=sys.stderr)
             sys.exit(-1)
         else:
@@ -121,7 +122,7 @@ def set_static_wallpaper(wallpaper_file):
         print(f"Wallpaper was set to '{wallpaper_file}'.")
         sys.exit(0)
     else:
-        print(f"ERROR! Wallpaper could not be set to '{wallpaper_file}'. Exit code ({exit_code})!",
+        print(f"ERROR! Wallpaper could not be set to '{wallpaper_file}'! Exit code ({exit_code}).",
         file=sys.stderr)
         sys.exit(-1)
 
@@ -131,11 +132,32 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
     ## 1  = directory (all images in dir will be used),
     ## 2+ = image files (all selected image files will be used):
     if len(wallpaper_file[0]) == 1:
-        ## Find all images in directory:
-        pass
+        ## Check if directory exists:
+        if os.path.isdir(wallpaper_file[0][0]):
+
+
+
+            ## Find all images in directory:
+            wallpaper_dynamic_list = os.listdir(f'{wallpaper_file[0][0]}')
+
+            print(wallpaper_dynamic_list)
+
+
+
+        elif os.path.isfile(wallpaper_file[0][0]):
+            print(f"ERROR! Specified file '{wallpaper_file[0][0]}' is not adirectory but a regular file! Select 1 directory or multiple image files for dynamic wallpaper.",
+            file=sys.stderr)
+            sys.exit(-1)
+        else:
+            print(f"ERROR! Specified file '{wallpaper_file[0][0]}' does not exists!",
+            file=sys.stderr)
+            sys.exit(-1)
+
+
+"""
     else:
         ## Use all arguments as wallpaper images:
         pass
-
+"""
 
 main()
