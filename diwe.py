@@ -39,12 +39,14 @@ def main():
         default=False,
         help="Set hybrid wallpaper"
     )
-    ## wallpaper argument:
+    ## wallpaper argument [['ARG1', 'ARG2', ...]]:
     parser.add_argument(
         "-w",
         "--wallpaper",
         type=str,
         default=None,
+        action='append',
+        nargs='+',
         help="set file as wallpaper")
     ## time argument (for dynamic wallpaper):
     parser.add_argument(
@@ -65,6 +67,10 @@ def main():
     if wallpaper_file == None:
         print(f"ERROR! No wallpaper was selected. Select wallpaper with '-w <WALLPAPER>'.",
         file=sys.stderr)
+        sys.exit(-1)
+
+    ## Time for dynamic wallpaper:
+    wallpaper_time = args.time
 
 
     ## Wallpaper modes:
@@ -76,21 +82,35 @@ def main():
     ## Check wallpaper mode:
     if args.dynamic:
         pass
+"""
+       ## Check if time was provided:
+        if wallpaper_time == None:
+            print(f"ERROR! No time was specified! Specify wallpaper with '-t <TIME>'.",
+            file=sys.stderr)
+            sys.exit(-1)
+        else:
+            set_dynamic_wallpaper(wallpaper_file, wallpaper_time)
+"""
     elif args.live:
         pass
     elif args.hybrid:
         pass
     else:
+        ## Check if only one wallpaper argument was provided for static wallpaper:
+        if len(wallpaper_file[0]) > 1:
+            print("ERROR! Static wallpaper can accept only 1 file.")
+            sys.exit(-1)
         ## Check if wallpaper is file:
-        if os.path.isfile(wallpaper_file):
-            set_static_wallpaper(wallpaper_file)
-        elif os.path.isdir(wallpaper_file):
-            print(f"ERROR! Specified wallpaper '{wallpaper_file}' is directory!",
+        if not os.path.isfile(wallpaper_file[0][0]):
+            print(f"ERROR! Specified wallpaper '{wallpaper_file[0][0]}' does not exists!",
             file=sys.stderr)
+            sys.exit(-1)
+        elif os.path.isdir(wallpaper_file[0][0]):
+            print(f"ERROR! Specified wallpaper '{wallpaper_file[0][0]}' is directory!",
+            file=sys.stderr)
+            sys.exit(-1)
         else:
-            print(f"ERROR! Specified wallpaper '{wallpaper_file}' does not exists!",
-            file=sys.stderr)
-
+            set_static_wallpaper(wallpaper_file[0][0])
 
 def set_static_wallpaper(wallpaper_file):
     ## Set wallpaper using 'feh':
@@ -102,10 +122,19 @@ def set_static_wallpaper(wallpaper_file):
     else:
         print(f"ERROR! Wallpaper could not be set to '{wallpaper_file}'. Exit code ({exit_code})!",
         file=sys.stderr)
+        sys.exit(-1)
 
 
-def set_dynamic_wallpaper()
-    pass
+def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
+
+    ## 2 Ways how to specify dynamic wallpaper:
+    ## - select directory -> all images inside directory will be choosed
+    ## - select multiple img files
+
+    ## Check if wallpaper_file is directory:
+    if os.path.isdir(wallpaper_file):
+        ## Find all images in directory:
+        pass
 
 
 main()
