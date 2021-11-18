@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 
+## apt install python3-pip
+## python3 -m pip install filetype
+
 import sys
 import os
 import argparse
+
+import filetype
+
 
 def main():
     ## create ArgumentParser object and add description of program:
@@ -132,15 +138,42 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
     ## 1  = directory (all images in dir will be used),
     ## 2+ = image files (all selected image files will be used):
     if len(wallpaper_file[0]) == 1:
+        ## If directory was specified in format 'DIR/' or 'DIR/////...', remove last '/' -> 'DIR':
+        while wallpaper_file[0][0][-1] == '/':
+            wallpaper_file[0][0] = wallpaper_file[0][0][:-1]
+
         ## Check if directory exists:
         if os.path.isdir(wallpaper_file[0][0]):
+            ## Declare list of images, that will be used for dynamic wallpaper:
+            wallpaper_dynamic_list = []
+
+            ## Find all files in directory 'wallpaper_file':
+            directory_file_list = os.listdir(f"{wallpaper_file[0][0]}")
+
+            ## If file is valid image, add to 'wallpaper_dynamic_list':
+            for file_in_directory in directory_file_list:
+                if os.path.isdir(wallpaper_file[0][0] + "/" + file_in_directory):
+                    print(f"WARNING! File '{wallpaper_file[0][0]}/{file_in_directory}' is a directory! Directory was skipped.",
+                    file=sys.stderr)
+
+                elif filetype.is_image(wallpaper_file[0][0] + "/" + file_in_directory):
+                    wallpaper_dynamic_list.append(wallpaper_file[0][0] + "/" + file_in_directory)
+                else:
+                    print(f"WARNING! File '{wallpaper_file[0][0]}/{file_in_directory}' is not valid image! File was skipped.",
+                    file=sys.stderr)
+
+            ## Check if too many files were not dropped (at least 2 files required for dynamic wallapper):
+            if len(wallpaper_dynamic_list) < 2:
+                print(f"ERROR! Not enough files for dynamic wallpaper ({len(wallpaper_dynamic_list)})! Maybe you want to specify static wallpaper?",
+                file=sys.stderr)
+                sys.exit(-1)
+
+            ## Sort list with images alphabetically:
+            wallpaper_dynamic_list.sort()
 
 
+            print(f"Debug: {wallpaper_dynamic_list}")
 
-            ## Find all images in directory:
-            wallpaper_dynamic_list = os.listdir(f'{wallpaper_file[0][0]}')
-
-            print(wallpaper_dynamic_list)
 
 
 
