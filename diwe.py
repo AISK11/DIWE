@@ -110,7 +110,6 @@ def main():
     ## 1 = dynamic
     ## 2 = live
     ## 3 = hybrid
-
     ## Check wallpaper mode:
     if args.dynamic:
         ## Check if time was provided:
@@ -198,10 +197,17 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
 
             ## Sort list with images alphabetically:
             wallpaper_dynamic_list.sort()
-
-
             print(f"Debug: {wallpaper_dynamic_list}")
 
+            ## Set dynamic wallpaper according to '-t' option:
+            if isinstance(wallpaper_time, int):
+                print("Debug: -t")
+                pass
+
+            ## Set dynamic wallpaper accorting to '-T' option:
+            elif isinstance(wallpaper_time, str):
+                print("Debug: -T")
+                pass
 
 
 
