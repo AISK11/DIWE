@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
+## Run with: nohup ./diwe.py <ARGS> &
+
 ## apt install python3-pip
 ## python3 -m pip install filetype
-
-import pdb
 
 import sys
 import os
 import argparse
+import time
 
 import filetype
 
@@ -200,15 +201,23 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
             print(f"Debug: {wallpaper_dynamic_list}")
 
             ## Set dynamic wallpaper according to '-t' option:
-            if isinstance(wallpaper_time, int):
-                print("Debug: -t")
-                pass
+            while 1:
+                ## If 'wallapper_time' is int -> '-t' option used by user.
+                if isinstance(wallpaper_time, int):
+                    ## Loop through all images in 'wallpaper_dynamic_list':
+                    for image in wallpaper_dynamic_list:
+                        exit_code = os.system(f"feh --bg-scale {image}")
+                        if exit_code == 0:
+                            print(f"Wallpaper was set to '{image}'.")
+                        else:
+                            print(f"ERROR! Wallpaper could not be set to '{image}'!",
+                            file=sys.stderr)
+                        time.sleep(wallpaper_time)
 
-            ## Set dynamic wallpaper accorting to '-T' option:
-            elif isinstance(wallpaper_time, str):
-                print("Debug: -T")
-                pass
-
+                ## Set dynamic wallpaper accorting to '-T' option:
+                elif isinstance(wallpaper_time, str):
+                    print("Debug: -T")
+                    pass
 
 
         elif os.path.isfile(wallpaper_file[0][0]):
@@ -219,6 +228,23 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
             print(f"ERROR! Specified file '{wallpaper_file[0][0]}' does not exists!",
             file=sys.stderr)
             sys.exit(-1)
+
+
+
+"""
+            ## Fork gets pid of 0:
+            fpid = os.fork()
+            if fpid!=0:
+                ## Running as daemon now. PID is fpid
+                while 1:
+                    print("a")
+                    time.sleep(5)
+            else:
+                ## Destroy parent:
+                print("Parent closed")
+                sys.exit(0)
+"""
+
 
 
 
