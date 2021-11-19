@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-## Run with: nohup ./diwe.py <ARGS> &
+## Run with: nohup ./diwe.py <ARGS>
 
 ## apt install python3-pip
 ## python3 -m pip install filetype
@@ -9,7 +9,6 @@ import sys
 import os
 import argparse
 import time
-
 import filetype
 
 
@@ -200,9 +199,9 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
             wallpaper_dynamic_list.sort()
             print(f"Debug: {wallpaper_dynamic_list}")
 
-            ## Set dynamic wallpaper according to '-t' option:
+            ## Infinite loop to keep setting dynamic wallpaper:
             while 1:
-                ## If 'wallapper_time' is int -> '-t' option used by user.
+                ## If 'wallapper_time' is int -> '-t' option provided.
                 if isinstance(wallpaper_time, int):
                     ## Loop through all images in 'wallpaper_dynamic_list':
                     for image in wallpaper_dynamic_list:
@@ -214,7 +213,7 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
                             file=sys.stderr)
                         time.sleep(wallpaper_time)
 
-                ## Set dynamic wallpaper accorting to '-T' option:
+                ## If 'wallpaper_time' is str -> '-T' option provided.
                 elif isinstance(wallpaper_time, str):
                     print("Debug: -T")
                     pass
