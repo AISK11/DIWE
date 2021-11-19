@@ -3,6 +3,8 @@
 ## apt install python3-pip
 ## python3 -m pip install filetype
 
+import pdb
+
 import sys
 import os
 import argparse
@@ -54,13 +56,23 @@ def main():
         action='append',
         nargs='+',
         help="set file as wallpaper")
-    ## time argument (for dynamic wallpaper):
-    parser.add_argument(
+    ## mutually exclusive arguments:
+    time_mode = parser.add_mutually_exclusive_group()
+    time_mode.add_argument(
         "-t",
         "--time",
+        type=int,
+        default=None,
+        help="set time in seconds after which next image will be displayed in dynamic wallpaper (e.g. \"10\", \"60\", \"3600\", ...)")
+    time_mode.add_argument(
+        "-T",
+        "--exact-time",
         type=str,
         default=None,
-        help="set time for dynamic wallpaper (e.g. \"10\", \"60s\", \"5m\", \"3h\")")
+        help="set specific time, when image should be changed (e.g. 'xx:xx:30' -> every minute at 30 second mark)")
+
+    ## -r = random
+    ## -R = true random
 
     ## pass arguments:
     args = parser.parse_args()
@@ -77,7 +89,20 @@ def main():
 
 
     ## Time for dynamic wallpaper:
-    wallpaper_time = args.time
+    wallpaper_time = None
+    if args.time != None:
+        wallpaper_time = args.time
+        ## Time in seconds cannot be negative (and 0 is static):
+        if wallpaper_time < 0:
+            print(f"ERROR. Specified time '{wallpaper_time}' cannot be negative value!",
+            file=sys.stderr)
+            sys.exit(-1)
+        elif wallpaper_time == 0:
+            print(f"ERROR. Specified time '{wallpaper_time}' cannot be 0! Use '-s' for static wallpaper.",
+            file=sys.stderr)
+            sys.exit(-1)
+    elif args.exact_time != None:
+        wallpaper_time = args.exact_time
 
 
     ## Wallpaper modes:
@@ -88,10 +113,9 @@ def main():
 
     ## Check wallpaper mode:
     if args.dynamic:
-        pass
-       ## Check if time was provided:
+        ## Check if time was provided:
         if wallpaper_time == None:
-            print(f"ERROR! No time was specified! Specify wallpaper with '-t <TIME>'.",
+            print(f"ERROR! No time was specified! Specify wallpaper with options '-t' or '-T'.",
             file=sys.stderr)
             sys.exit(-1)
         else:
@@ -101,6 +125,11 @@ def main():
     elif args.hybrid:
         pass
     else:
+        ## If time was specified, print warning:
+        if wallpaper_time != None:
+            print("Warning! Time argument is not used for static wallpaper and will be ignored.",
+            file=sys.stderr)
+
         ## Check if only one wallpaper argument was provided for static wallpaper:
         if len(wallpaper_file[0]) > 1:
             print("ERROR! Static wallpaper can accept only 1 file!",
@@ -155,14 +184,13 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
                 if os.path.isdir(wallpaper_file[0][0] + "/" + file_in_directory):
                     print(f"WARNING! File '{wallpaper_file[0][0]}/{file_in_directory}' is a directory! Directory was skipped.",
                     file=sys.stderr)
-
                 elif filetype.is_image(wallpaper_file[0][0] + "/" + file_in_directory):
                     wallpaper_dynamic_list.append(wallpaper_file[0][0] + "/" + file_in_directory)
                 else:
                     print(f"WARNING! File '{wallpaper_file[0][0]}/{file_in_directory}' is not valid image! File was skipped.",
                     file=sys.stderr)
 
-            ## Check if too many files were not dropped (at least 2 files required for dynamic wallapper):
+            ## Check if too many files were not dropped (at least 2 files are required for dynamic wallapper):
             if len(wallpaper_dynamic_list) < 2:
                 print(f"ERROR! Not enough files for dynamic wallpaper ({len(wallpaper_dynamic_list)})! Maybe you want to specify static wallpaper?",
                 file=sys.stderr)
@@ -187,10 +215,8 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
             sys.exit(-1)
 
 
-"""
-    else:
-        ## Use all arguments as wallpaper images:
-        pass
-"""
+
+
+
 
 main()
