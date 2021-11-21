@@ -5,11 +5,13 @@
 ## apt install python3-pip
 ## python3 -m pip install filetype
 
-import sys
-import os
-import argparse
-import time
-import filetype
+
+import sys      ## exit program with return code: sys.exit
+import os       ## working with files: os.path, os.system, os.listdir
+import argparse ## parse arguments from CLI
+import time     ## sleep: time.sleep
+import datetime ## get current date and time: datetime.datetime
+import filetype ## check if file contain magic bytes: filetype.is_image
 
 
 def main():
@@ -147,7 +149,9 @@ def main():
             set_static_wallpaper(wallpaper_file[0][0])
 
 
-def set_static_wallpaper(wallpaper_file):
+## Function accepts string containing path to image-file,
+## and sets it as Desktop wallpaper with GNU command 'feh'.
+def set_static_wallpaper(wallpaper_file=""):
     ## Set wallpaper using 'feh':
     exit_code = os.system(f'feh --bg-scale {wallpaper_file}')
 
@@ -209,18 +213,28 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
                         if exit_code == 0:
                             print(f"Wallpaper was set to '{image}'.")
                         else:
-                            print(f"ERROR! Wallpaper could not be set to '{image}'!",
+                            print(f"WARNING! Wallpaper could not be set to '{image}'!",
                             file=sys.stderr)
                         time.sleep(wallpaper_time)
 
                 ## If 'wallpaper_time' is str -> '-T' option provided.
                 elif isinstance(wallpaper_time, str):
-                    print("Debug: -T")
-                    pass
+
+                    ## Have config file like this:
+                    ## -T <CONFIG-FILE>
+                    ## 00:00:00    img01
+                    ## 01:00:00    img02
+                    ## ...         ...
+                    ## 23:00:00    img24
+
+                    ## Get current time in string format : "HH:mm:ss"
+                    current_time = datetime.datetime.now().strftime("%H:%m:%S")
+
+
 
 
         elif os.path.isfile(wallpaper_file[0][0]):
-            print(f"ERROR! Specified file '{wallpaper_file[0][0]}' is not adirectory but a regular file! Select 1 directory or multiple image files for dynamic wallpaper.",
+            print(f"ERROR! Specified file '{wallpaper_file[0][0]}' is not a directory but a regular file! Select 1 directory or multiple image files for dynamic wallpaper.",
             file=sys.stderr)
             sys.exit(-1)
         else:
@@ -246,8 +260,23 @@ def set_dynamic_wallpaper(wallpaper_file, wallpaper_time):
 
 
 
+## Function accepts string containing path to text-file with data in a form:
+"""CONFIG_FILE.txt
+00:00:00    /PATH/TO/img01
+01:00:00    /PATH/TO/img02
+...         ...
+23:00:00    /PATH/TO/img24
+"""
+## and returns either list of times ['00:00:00', '01:00:00', ..., '23:00:00] (if return_column == 0)
+## or list of images ['/PATH/TO/img01', '/PATH/TO/img02', ..., '/PATH/TO/img24'] (if return_column == 1).
+def dynamic_wallpaper_config_file(config_file="", return_column=0):
+    ## Check if 'config_file' exists:
 
 
+    ## Read each line by line and add text from 'return_column' to list, that will be returned:
+
+
+    ## return list:
 
 
 main()
